@@ -1,14 +1,13 @@
 import { books } from '../helper/books';
-import { common } from '../helper/common';
+import { common, localArray } from '../helper/common';
 import { createMarcup } from '../helper/createMarcup';
 import { createModal } from '../helper/createModal';
 import { findBook } from '../helper/findBook';
 import throttle from 'lodash.throttle';
 
 
-const favorite = JSON.parse(localStorage.getItem(common.KEY_FAVORITE)) ?? [];
-const basket = JSON.parse(localStorage.getItem(common.KEY_BASKET)) ?? [];
 
+const swichBtn = document.querySelector('.switch-btn');
 const list = document.querySelector('.list')
 console.log(list);
 
@@ -26,29 +25,49 @@ function onclick(event) {
 
     if (event.target.classList.contains('js-favorite')) {
         const book = findBook((event.target));
-        const inStorage = favorite.some(({id}) => id === book.id);
+        const inStorage = localArray.favorite.some(({id}) => id === book.id);
         if (inStorage) {
             return
         }
-        favorite.push(book);
-        localStorage.setItem(common.KEY_FAVORITE, JSON.stringify(favorite))
+        localArray.favorite.push(book);
+        localStorage.setItem(common.KEY_FAVORITE, JSON.stringify(localArray.favorite))
     }
 
     if (event.target.classList.contains('js-basket')) {
         const book = findBook((event.target));
-        const inStorage = basket.some(({id}) => id === book.id);
+        const inStorage = localArray.basket.some(({id}) => id === book.id);
         if (inStorage) {
             return
         }
-        basket.push(book);
-        localStorage.setItem(common.KEY_BASKET, JSON.stringify(basket))
+        localArray.basket.push(book);
+        localStorage.setItem(common.KEY_BASKET, JSON.stringify(localArray.basket))
     }
 }
 
-// const inputEl = document.querySelector('.js-search')
-// inputEl.addEventListener('input', throttle(searchBook, 500))
+swichBtn.addEventListener('click', switchTheme)
+
+function switchTheme() {
+    swichBtn.classList.toggle('switch-on')
+
+    if(swichBtn.classList.contains('switch-on')) {
+        list.style.backgroundColor = "gray";
+    }
+
+    if(!swichBtn.classList.contains('switch-on')) {
+        list.style.backgroundColor = "white";
+    }
+
+    // list.style.backgroundColor = "white";
+}
+
+//     const inputEl = document.querySelector('.js-search')
+//     inputEl.addEventListener('input', searchBook)
 
 // function searchBook(event) {
 //     const target = event.target.value.toLowerCase();
 //     const searchEl = books.find(book => book.name.toLowerCase().includes(target));
+//     if(!target) {
+//         return createMarcup(books, list)
+//     }
+//     return createMarcup(searchEl, list)
 // }
